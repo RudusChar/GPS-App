@@ -1,14 +1,8 @@
-# A Blank PhoneGap App
+# GPS APP
 
-## Usage
+## by Remburn
 
-### PhoneGap CLI
+### Showing only the Coords
 
-    $ phonegap create my-app --template blank
-
-### Desktop
-
-In your browser, open the file:
-
-    /www/index.html
+### in all three versions
 
