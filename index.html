@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8"/>
+    <title>Kleine GPS Applikation</title>
+</head>
+
+<h1>Zeige Koordinaten</h1>
+
+<body>
+	<p>Sobald Sie auf LOS! klicken, werden Ihre Koordinaten ermittelt.</p>
+	<p>Falls es zu einem Fehler kommt, wird die Art des Fehlers angegeben.</p>
+    <button id="los">Los!</button>
+    
+    <p id="ausgabe">Fehlermeldungen: -</p>
+    <p id="genauigkeit"></p>
+    
+    <h1>Dezimalminuten</h1>
+        <p id="dezmin"></p>
+        
+    <h1>Grad Minute Sekunde</h1>
+        <p id="gradsek"></p>
+
+    <h1>Geocaching</h1>
+        <p id="geocaching"></p>
+
+    <p>Applikation erstellt von Remburn 2018</p>
+</body>
+
+<script>
+	var button = document.getElementById('los');
+	button.addEventListener('click', ermittlePosition);
+
+	function ermittlePosition() {
+		if (navigator.geolocation) {
+			var watchit = navigator.geolocation.watchPosition(zeigePosition, zeigeFehler, {enableHighAccuracy: false, timeout: 40000, maximumAge: 50000 });
+		} else {
+			ausgabe.innerHTML = 'Ihr Browser unterstützt keine Geolocation.';
+		}
+	}
+
+	function zeigePosition(position) {
+
+        // Berechnungen
+        var Grad = Math.floor(position.coords.latitude); 
+        var Minuten = Math.floor((position.coords.latitude - Grad)*60);
+        var Sekunden = Math.floor((((position.coords.latitude - Grad)*60 - Minuten) * 60)*100)/100;
+        var Gradlong = Math.floor(position.coords.longitude); 
+        var Minutenlong = Math.floor((position.coords.longitude - Gradlong)*60);
+        var Sekundenlong = Math.floor((((position.coords.longitude - Gradlong)*60 - Minutenlong) * 60)*100)/100;
+        var MinutenCache = Math.floor((position.coords.latitude - Grad) *60*1000)/1000;
+        var MinutenCachelong = Math.floor((position.coords.longitude - Gradlong) *60*1000)/1000;
+
+        //Zeige Dezimalminuten
+        genauigkeit.innerHTML = "Genauigkeit " + position.coords.accuracy + " Meter";
+		dezmin.innerHTML = "Breite: " + position.coords.latitude +
+            "<br>Länge: " + position.coords.longitude;
+
+        //Zeige Grad, Minuten, Sekunden
+        gradsek.innerHTML = "Breite: " + Grad + "&deg; " + Minuten + "&prime; " + Sekunden + "&Prime;" + "<br>Länge: " + Gradlong + "&deg; " + Minutenlong + "&prime; " + Sekundenlong + "&Prime;";
+
+        //Zeige Geocaching-Coords
+        geocaching.innerHTML = "Breite " + Grad + "&deg; "+ MinutenCache + "&prime; " + "<br>Länge " + Gradlong + " &deg; "+ MinutenCachelong;
+
+	}
+
+	function zeigeFehler(error) {
+		switch (error.code) {
+		case error.PERMISSION_DENIED:
+			ausgabe.innerHTML = "Fehler: Benutzer lehnte Standortabfrage ab."
+			break;
+		case error.POSITION_UNAVAILABLE:
+			ausgabe.innerHTML = "Fehler: Standortdaten sind nicht verfügbar."
+			break;
+		case error.TIMEOUT:
+			ausgabe.innerHTML = "Fehler: Die Standortabfrage dauerte zu lange (Time-out)."
+			break;
+		case error.UNKNOWN_ERROR:
+			ausgabe.innerHTML = "Fehler: unbekannter Fehler."
+			break;
+		}
+    }
+    
+</script>
+
+<style>
+
+    * {
+        background: #8ab7e4;
+        color: #123456;
+    }
+
+    h1 {
+        background: #123456;
+        color: #ffffff;
+        padding: 10px;
+        border-radius:5px;
+    }
+
+    #los {
+        padding: 10px;
+        width: 50px;
+        height: 50px;
+        border-radius:5px;
+        background: #069411;
+        color: #ffffff;
+    }
+
+    #ausgabe {
+        color: #cd1818;
+    }
+
+</style>
